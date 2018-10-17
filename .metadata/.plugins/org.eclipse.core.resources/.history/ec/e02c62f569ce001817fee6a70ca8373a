@@ -1,0 +1,5 @@
+package com.gtek.handlers;
+
+public class Ping {
+
+}

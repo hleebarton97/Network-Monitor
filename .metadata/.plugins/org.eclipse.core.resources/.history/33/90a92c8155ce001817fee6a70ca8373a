@@ -1,0 +1,24 @@
+package com.gtek.handlers;
+
+public class State {
+	
+	public static final int STATE_INIT = 0;
+	public static final int STATE_RUNNING = 1;
+	public static final int STATE_STOPPED = 2;
+	public static final int ERROR = -1;
+	
+	private int current_state;
+	
+	/**
+	 * CONSTRUCTOR
+	 * Initialize the State Handler
+	 */
+	public State() {
+		this.setState(this.STATE_INIT);
+	}
+	
+	public void setState(int state) {
+		this.current_state = state;
+	}
+
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="com.mongodb.MongoClient"/>
+<fullyQualifiedTypeName name="com.gtek.handlers.Database"/>
+<fullyQualifiedTypeName name="com.gtek.util.Reference"/>
+<fullyQualifiedTypeName name="com.mongodb.MongoClientURI"/>
+<fullyQualifiedTypeName name="com.gtek.handlers.State"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="com.gtek.objects.NetworkSite"/>
+<fullyQualifiedTypeName name="java.util.TimerTask"/>
+<fullyQualifiedTypeName name="com.gtek.util.Console"/>
+<fullyQualifiedTypeName name="java.util.Timer"/>
+<fullyQualifiedTypeName name="com.gtek.handlers.Ping"/>
+<fullyQualifiedTypeName name="java.net.InetAddress"/>
+</qualifiedTypeNameHistroy>

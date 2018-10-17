@@ -1,0 +1,35 @@
+package com.gtek;
+
+import java.util.ArrayList;
+
+import com.gtek.handlers.Database;
+import com.gtek.handlers.State;
+import com.gtek.objects.NetworkSite;
+import com.gtek.util.Reference;
+import com.mongodb.*;
+
+public class App {
+	
+    public static void main( String[] args ) {
+    	
+    	/**
+    	 * INITIALIZATION
+    	 */
+    	
+    	State STATE = new State(); // Create our state handler
+    	ArrayList<NetworkSite> NETWORK_SITE_LIST = new ArrayList<NetworkSite>();
+    	
+    	// Get our collection instance from the MongoDB instance
+    	STATE.setStateProcess("Retrieving network site information");
+    	DBCollection COLLECTION_TOWERS = new Database(Reference.CONNECTION_STRING)
+    								.getMongoClient()
+    									.getDB(Reference.DATABASE_NAME)
+    										.getCollection(Reference.COLLECTION_NAME);
+    	// Get each network site IP
+    	for(DBObject cursor : COLLECTION_TOWERS.find()) {
+    		//NETWORK_SITE_LIST.add(new NetworkSite(cursor.get("id")));
+    		System.out.println(cursor.get("id"));
+    	}
+    }
+    
+}

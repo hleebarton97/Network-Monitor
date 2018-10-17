@@ -1,0 +1,16 @@
+package com.gtek.handlers;
+
+import java.util.TimerTask;
+
+import com.gtek.util.Console;
+
+public class Ping extends TimerTask {
+	
+	private int fake_ip = '10.0.1.98';
+
+	@Override
+	public void run() {
+		
+	}
+
+}

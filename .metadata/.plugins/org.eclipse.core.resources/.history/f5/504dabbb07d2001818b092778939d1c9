@@ -1,0 +1,19 @@
+package com.gtek.handlers;
+
+import java.util.TimerTask;
+
+import com.gtek.util.Console;
+
+public class Ping extends TimerTask {
+	
+	private int count = 0;
+
+	@Override
+	public void run() {
+		
+		Console.log("");
+		
+		count++;
+	}
+
+}

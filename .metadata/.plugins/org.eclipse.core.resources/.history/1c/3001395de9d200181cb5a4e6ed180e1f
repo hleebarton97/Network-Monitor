@@ -1,0 +1,9 @@
+package com.gtek.util;
+
+public class Reference {
+	
+	public static final String CONNECTION_STRING = "mongodb://app:4usonly@ds119052.mlab.com:19052/network-monitor";
+	public static final String DATABASE_NAME = "network-monitor";
+	public static final String COLLECTION_NAME = "towers";
+	
+}

@@ -10,11 +10,12 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.MongoTimeoutException;
 
 public class Database {
 	
-	private MongoClientURI connectionString; 
-	private MongoClient mongoClient;
+	private MongoClientURI connectionString; // MongoDB connection string
+	private MongoClient mongoClient; // MongoDB client
 	
 	
 	
@@ -25,21 +26,27 @@ public class Database {
 	 * @param tower
 	 * @param isUp
 	 */
-	public static void updateDatabase(DBCollection col, NetworkSite tower) {
-		
+	public static void UpdateDatabase(DBCollection col, NetworkSite tower) {
+		// Update object with this network site's OID
 		BasicDBObject query = new BasicDBObject().append("_id", new ObjectId(tower.getOid()));
 		
 		Console.log("Updating DB...");
-		// Update status
-		col.update(
-				query,
-				new BasicDBObject().append("$set", new BasicDBObject().append("down", tower.isDown()))
-		);
-		// Update down time
-		col.update(
-				query,
-				new BasicDBObject().append("$set", new BasicDBObject().append("downTime", tower.getDownTime()))
-		);
+		
+		try {
+			// Update status
+			col.update(
+					query,
+					new BasicDBObject().append("$set", new BasicDBObject().append("down", tower.isDown()))
+			);
+			// Update down time
+			col.update(
+					query,
+					new BasicDBObject().append("$set", new BasicDBObject().append("downTime", tower.getDownTime()))
+			);
+			
+		} catch(MongoTimeoutException e) { // Timeout - Loss of internet connection
+			e.printStackTrace();
+		}
 		
 	}
 	

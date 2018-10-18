@@ -17,6 +17,7 @@ public class NetworkSite {
 	private DBCollection col;	// The collection this specific
 								// object belongs to
 	
+	
 	/**
 	 * CONSTRUCTOR
 	 * @param _oid
@@ -46,6 +47,8 @@ public class NetworkSite {
 		this.setRouter(router);
 		this.setCollection(col);
 	}
+	
+	
 	
 	/**
 	 * Set the MongoDB object ID.

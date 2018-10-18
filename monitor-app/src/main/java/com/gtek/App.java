@@ -14,9 +14,14 @@ public class App {
     	
     	/**
     	 * INITIALIZATION
+    	 * 
+    	 * Initialize the state handler, Create our network site object list,
+    	 * Initialize the MongoDB instance and get our collection of 
+    	 * documents.
     	 */
     	
     	State STATE = new State(); // Create our state handler
+    	// Initialize our list of network site objects
     	ArrayList<NetworkSite> NETWORK_SITE_LIST = new ArrayList<NetworkSite>();
     	
     	// Get our collection instance from the MongoDB instance
@@ -42,25 +47,18 @@ public class App {
     	
     	/**
     	 * BEGIN PINGING PROCESS
+    	 * 
+    	 * Update the state to running and utilize the ping object
+    	 * to start a scheduled process for every minute.
+    	 * Ping each network site and update their MongoDB
+    	 * document utilizing multiple threads.
     	 */
+    	
+    	// Update system state
     	STATE.setState(State.STATE_RUNNING);
     	STATE.setStateProcess("Running");
+    	// Begin ping process
     	Ping.Start(NETWORK_SITE_LIST);
-//    	Timer timer = new Timer();
-//    	Ping ping = new Ping();
-//    	ping.setPingable(NETWORK_SITE_LIST);
-//    	timer.schedule(ping, 0, (2000));
-    	/**
-    	 * The above needs its own class handler.
-    	 * I want to be able to call a static function from
-    	 * a class like Ping.start();
-    	 * And it starts the process, basically accomplishing
-    	 * what the code above does (just migrate the code).
-    	 * Probably two classes - so Ping and some other
-    	 * class like Timed or something.
-    	 * 
-    	 * 
-    	 */
     	
     }
     

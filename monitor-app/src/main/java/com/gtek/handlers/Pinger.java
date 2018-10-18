@@ -7,10 +7,15 @@ import com.gtek.util.Console;
 
 public class Pinger extends Thread {
 	
-	private ArrayList<NetworkSite> NETWORK_SITE_LIST;
+	private ArrayList<NetworkSite> NETWORK_SITE_LIST; // Network Site list
+	
+	
 	
 	/**
 	 * CONSTRUCTOR
+	 * Set the list of network sites to be monitored
+	 * by the thread.
+	 * 
 	 * @param list
 	 */
 	public Pinger(ArrayList<NetworkSite> list) {
@@ -24,21 +29,20 @@ public class Pinger extends Thread {
 	public void run() {
 		
 		try {
-			
+			// Check status by ICMP ECHO
 			for(NetworkSite tower : NETWORK_SITE_LIST) {
 				
 				boolean isUp = this.isReachable(tower.getRouter());
 				Console.log(isUp ? tower.getNameId() + " is up!" : tower.getNameId() + " is down!");
-				
+				// Set status and time down in minutes
 				tower.setStatus(!isUp);
 				if(isUp) {
 					tower.resetDownTime();
 				} else {
 					tower.updateDownTime();
 				}
-				
 				// Update DB with the result
-				Database.updateDatabase(tower.getCollection(), tower);
+				Database.UpdateDatabase(tower.getCollection(), tower);
 			}
 			
 		}
@@ -64,9 +68,7 @@ public class Pinger extends Thread {
 			return address.isReachable(250); // Ping address
 			
 		} catch (Exception e) {
-			
 			e.printStackTrace();
-			
 		}
 		return false;
 	}

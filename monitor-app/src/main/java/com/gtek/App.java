@@ -1,13 +1,10 @@
 package com.gtek;
 
 import java.util.ArrayList;
-import java.util.Timer;
-
 import com.gtek.handlers.Database;
 import com.gtek.handlers.Ping;
 import com.gtek.handlers.State;
 import com.gtek.objects.NetworkSite;
-import com.gtek.util.Console;
 import com.gtek.util.Reference;
 import com.mongodb.*;
 
@@ -17,9 +14,14 @@ public class App {
     	
     	/**
     	 * INITIALIZATION
+    	 * 
+    	 * Initialize the state handler, Create our network site object list,
+    	 * Initialize the MongoDB instance and get our collection of 
+    	 * documents.
     	 */
     	
     	State STATE = new State(); // Create our state handler
+    	// Initialize our list of network site objects
     	ArrayList<NetworkSite> NETWORK_SITE_LIST = new ArrayList<NetworkSite>();
     	
     	// Get our collection instance from the MongoDB instance
@@ -37,31 +39,26 @@ public class App {
     			NETWORK_SITE_LIST.add(new NetworkSite(cursor.get("_id").toString(), 
     												  Integer.parseInt(cursor.get("id").toString()), 
     												  cursor.get("name").toString(), 
-    												  cursor.get("router").toString()));
+    												  cursor.get("router").toString(),
+    												  COLLECTION_TOWERS));
     	}
     	
     	
     	
     	/**
     	 * BEGIN PINGING PROCESS
+    	 * 
+    	 * Update the state to running and utilize the ping object
+    	 * to start a scheduled process for every minute.
+    	 * Ping each network site and update their MongoDB
+    	 * document utilizing multiple threads.
     	 */
+    	
+    	// Update system state
     	STATE.setState(State.STATE_RUNNING);
     	STATE.setStateProcess("Running");
-    	Timer timer = new Timer();
-    	Ping ping = new Ping();
-    	ping.setPingable(NETWORK_SITE_LIST);
-    	timer.schedule(ping, 0, (2000));
-    	/**
-    	 * The above needs its own class handler.
-    	 * I want to be able to call a static function from
-    	 * a class like Ping.start();
-    	 * And it starts the process, basically accomplishing
-    	 * what the code above does (just migrate the code).
-    	 * Probably two classes - so Ping and some other
-    	 * class like Timed or something.
-    	 * 
-    	 * 
-    	 */
+    	// Begin ping process
+    	Ping.Start(NETWORK_SITE_LIST);
     	
     }
     

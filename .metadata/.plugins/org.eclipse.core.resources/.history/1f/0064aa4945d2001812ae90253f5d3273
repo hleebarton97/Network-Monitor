@@ -1,0 +1,15 @@
+package com.gtek.handlers;
+
+public class Pinger extends Thread {
+
+	public void run() {
+		
+		try {
+		
+		}
+		catch(Exception e) {
+			
+		}
+		
+	}
+}

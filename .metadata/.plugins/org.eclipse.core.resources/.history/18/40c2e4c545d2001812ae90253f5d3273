@@ -1,0 +1,35 @@
+package com.gtek.handlers;
+
+import java.util.ArrayList;
+
+import com.gtek.objects.NetworkSite;
+import com.gtek.util.Console;
+
+public class Pinger extends Thread {
+	
+	ArrayList<NetworkSite> list;
+	
+	public Pinger(ArrayList<NetworkSite> list) {
+		
+	}
+
+	@Override
+	public void run() {
+		
+		try {
+		
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * @param list
+	 */
+	public void setList(ArrayList<NetworkSite> list) {
+		
+	}
+}

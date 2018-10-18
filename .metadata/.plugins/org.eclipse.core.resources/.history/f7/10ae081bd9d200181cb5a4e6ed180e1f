@@ -1,0 +1,70 @@
+package com.gtek.handlers;
+
+import java.net.InetAddress;
+import java.util.ArrayList;
+import com.gtek.objects.NetworkSite;
+import com.gtek.util.Console;
+
+public class Pinger extends Thread {
+	
+	ArrayList<NetworkSite> NETWORK_SITE_LIST;
+	
+	/**
+	 * CONSTRUCTOR
+	 * @param list
+	 */
+	public Pinger(List<NetworkSite> list) {
+		this.setList(list);
+	}
+
+	@Override
+	public void run() {
+		
+		try {
+			
+			for(NetworkSite tower : NETWORK_SITE_LIST) {
+				Console.log(this.isReachable(tower.getRouter()) ? tower.getNameId() + " is up!" : tower.getNameId() + " is down!");
+			}
+			Console.log("Thread " + Thread.currentThread().getId() + " DONE...");
+			
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * Use inet address to use ICMP 
+	 * ECHO Requests to get the boolean
+	 * status for an address.
+	 * 
+	 * @param ip
+	 * @return boolean
+	 */
+	private boolean isReachable(String ip) {
+		
+		try {
+			
+			InetAddress address = InetAddress.getByName(ip);
+			return address.isReachable(250);
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			
+		}
+		return false;
+	}
+	
+	/**
+	 * Set the array list of network site
+	 * objects.
+	 * 
+	 * @param list
+	 */
+	public void setList(ArrayList<NetworkSite> list) {
+		this.NETWORK_SITE_LIST = list;
+	}
+	
+}

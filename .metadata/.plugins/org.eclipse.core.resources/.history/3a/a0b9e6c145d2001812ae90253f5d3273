@@ -1,0 +1,17 @@
+package com.gtek.handlers;
+
+import com.gtek.util.Console;
+
+public class Pinger extends Thread {
+
+	public void run() {
+		
+		try {
+		
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+}

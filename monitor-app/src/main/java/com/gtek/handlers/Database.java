@@ -1,15 +1,56 @@
 package com.gtek.handlers;
 
 import java.net.UnknownHostException;
+
+import org.bson.types.ObjectId;
+
+import com.gtek.objects.NetworkSite;
+import com.gtek.util.Console;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.MongoTimeoutException;
 
 public class Database {
 	
-	private MongoClientURI connectionString; 
-	private MongoClient mongoClient;
+	private MongoClientURI connectionString; // MongoDB connection string
+	private MongoClient mongoClient; // MongoDB client
 	
-
+	
+	
+	/**
+	 * Update a network site with uptime information.
+	 * 
+	 * @param col
+	 * @param tower
+	 * @param isUp
+	 */
+	public static void UpdateDatabase(DBCollection col, NetworkSite tower) {
+		// Update object with this network site's OID
+		BasicDBObject query = new BasicDBObject().append("_id", new ObjectId(tower.getOid()));
+		
+		Console.log("Updating DB...");
+		
+		try {
+			// Update status
+			col.update(
+					query,
+					new BasicDBObject().append("$set", new BasicDBObject().append("down", tower.isDown()))
+			);
+			// Update down time
+			col.update(
+					query,
+					new BasicDBObject().append("$set", new BasicDBObject().append("downTime", tower.getDownTime()))
+			);
+			
+		} catch(MongoTimeoutException e) { // Timeout - Loss of internet connection
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
 	
 	/**
 	 * CONSTRUCTOR

@@ -1,5 +1,11 @@
 package com.gtek.util;
 
+/**
+ * Used as an API for Java's annoying
+ * "System.out.prinln()" and replaces
+ * it with JavaScript's very pretty
+ * and simple "Console.log()"
+ */
 public class Console {
 	
 	public static void log(String string) {
@@ -8,5 +14,13 @@ public class Console {
 	
 	public static void log(int val) {
 		System.out.println(val);
+	}
+	
+	public static void log(double val) {
+		System.out.println(val);
+	}
+	
+	public static void log() {
+		System.out.println();
 	}
 }

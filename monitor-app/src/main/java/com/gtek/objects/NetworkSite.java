@@ -1,15 +1,25 @@
 package com.gtek.objects;
 
+import com.mongodb.DBCollection;
+
 public class NetworkSite {
 	
 	private String _oid; // MongoDB collection document ID
 	
 	private int id;			// Network Site ID
 	private String name;	// Network Site Name
-	private	String router;	// Network Site Router IP 
+	private	String router;	// Network Site Router IP
+	
+	private boolean isDown;		// Is the Network Site down or not
+	private int downTime = -1;	// Time in minutes the site has
+								// been down for
+	
+	private DBCollection col;	// The collection this specific
+								// object belongs to
+	
 	
 	/**
-	 * 
+	 * CONSTRUCTOR
 	 * @param _oid
 	 * @param id
 	 * @param name
@@ -21,6 +31,24 @@ public class NetworkSite {
 		this.setName(name);
 		this.setRouter(router);
 	}
+	
+	/**
+	 * CONSTRUCTOR
+	 * @param _oid
+	 * @param id
+	 * @param name
+	 * @param router
+	 * @param col
+	 */
+	public NetworkSite(String _oid, int id, String name, String router, DBCollection col) {
+		this.setOid(_oid);
+		this.setId(id);
+		this.setName(name);
+		this.setRouter(router);
+		this.setCollection(col);
+	}
+	
+	
 	
 	/**
 	 * Set the MongoDB object ID.
@@ -113,6 +141,8 @@ public class NetworkSite {
 	}
 	
 	/**
+	 * Set the IP Address of the
+	 * network site.
 	 * 
 	 * @param router
 	 */
@@ -121,10 +151,86 @@ public class NetworkSite {
 	}
 	
 	/**
+	 * Get the IP address of the
+	 * network site.
 	 * 
 	 * @return
 	 */
 	public String getRouter() {
 		return this.router;
+	}
+	
+	/**
+	 * Set the status of the network
+	 * site.
+	 * 
+	 * @param status
+	 */
+	public void setStatus(boolean status) {
+		this.isDown = status;
+	}
+	
+	/**
+	 * Get the status of the network
+	 * site.
+	 * 
+	 */
+	public boolean isDown() {
+		return this.isDown;
+	}
+	
+	/**
+	 * Set the down time in minutes
+	 * of this network site.
+	 * 
+	 * @param downTime
+	 */
+	public void setDownTime(int downTime) {
+		this.downTime = downTime;
+	}
+	
+	/**
+	 * Set the down time back to 0.
+	 */
+	public void resetDownTime() {
+		this.downTime = 0;
+	}
+	
+	/**
+	 * Increment the down time by
+	 * one minute.
+	 */
+	public void updateDownTime() {
+		this.downTime++;
+	}
+	
+	/**
+	 * Get the down time in minutes
+	 * of this network site.
+	 * 
+	 * @return int
+	 */
+	public int getDownTime() {
+		return this.downTime;
+	}
+	
+	/**
+	 * Set the collection that this
+	 * network site belongs to (towers).
+	 * 
+	 * @param col
+	 */
+	public void setCollection(DBCollection col) {
+		this.col = col;
+	}
+	
+	/**
+	 * Get the collection this network site 
+	 * belongs to (towers).
+	 * 
+	 * @return DBCollection
+	 */
+	public DBCollection getCollection() {
+		return this.col;
 	}
 }

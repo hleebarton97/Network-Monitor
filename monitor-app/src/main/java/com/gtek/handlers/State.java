@@ -2,13 +2,17 @@ package com.gtek.handlers;
 
 public class State {
 	
-	public static final int STATE_INIT = 0;
-	public static final int STATE_RUNNING = 1;
-	public static final int STATE_STOPPED = 2;
-	public static final int ERROR = -1;
+	public static final int STATE_INIT = 0;		// Initializing
+	public static final int STATE_RUNNING = 1;	// Running
+	public static final int STATE_STOPPED = 2;	// Stopped
+	public static final int ERROR = -1;			// System error
 	
-	private int current_state;
-	private String current_state_process;
+	
+	
+	private int current_state;				// Current state of the system.
+	private String current_state_process;	// Current process within the 
+											// current state.
+	
 	
 	
 	/**

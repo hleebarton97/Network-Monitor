@@ -27,20 +27,11 @@ public class Database {
 	 */
 	public static void updateDatabase(DBCollection col, NetworkSite tower) {
 		
-		BasicDBObject query = new BasicDBObject().append("_id", new ObjectId(tower.getOid()));
-		
 		Console.log("Updating DB...");
-		// Update status
 		col.update(
-				query,
+				new BasicDBObject().append("_id", new ObjectId(tower.getOid())),
 				new BasicDBObject().append("$set", new BasicDBObject().append("down", tower.isDown()))
 		);
-		// Update down time
-		col.update(
-				query,
-				new BasicDBObject().append("$set", new BasicDBObject().append("downTime", tower.getDownTime()))
-		);
-		
 	}
 	
 	

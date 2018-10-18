@@ -10,12 +10,11 @@ public class NetworkSite {
 	private String name;	// Network Site Name
 	private	String router;	// Network Site Router IP
 	
-	private boolean isDown;		// Is the Network Site down or not
-	private int downTime = -1;	// Time in minutes the site has
-								// been down for
+	private int downTime;	// Time in minutes the site has
+							// been down for.
 	
 	private DBCollection col;	// The collection this specific
-								// object belongs to
+								// object belongs to.
 	
 	/**
 	 * CONSTRUCTOR
@@ -155,25 +154,6 @@ public class NetworkSite {
 	 */
 	public String getRouter() {
 		return this.router;
-	}
-	
-	/**
-	 * Set the status of the network
-	 * site.
-	 * 
-	 * @param status
-	 */
-	public void setStatus(boolean status) {
-		this.isDown = status;
-	}
-	
-	/**
-	 * Get the status of the network
-	 * site.
-	 * 
-	 */
-	public boolean isDown() {
-		return this.isDown;
 	}
 	
 	/**

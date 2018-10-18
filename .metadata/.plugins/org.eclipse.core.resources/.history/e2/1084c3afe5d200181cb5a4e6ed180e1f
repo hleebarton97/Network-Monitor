@@ -38,7 +38,7 @@ public class Database {
 		// Update down time
 		col.update(
 				query,
-				new BasicDBObject().append("$set", new BasicDBObject().append("downTime", tower.getDownTime()))
+				new BasicDBObject().append("$set", new BasicDBObject().append("downTime", tower.getDownTime()));
 		);
 		
 	}

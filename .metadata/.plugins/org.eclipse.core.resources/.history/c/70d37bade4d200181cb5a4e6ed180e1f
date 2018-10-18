@@ -30,7 +30,6 @@ public class Pinger extends Thread {
 				boolean isUp = this.isReachable(tower.getRouter());
 				Console.log(isUp ? tower.getNameId() + " is up!" : tower.getNameId() + " is down!");
 				
-				tower.setStatus(!isUp);
 				if(isUp) {
 					tower.resetDownTime();
 				} else {
@@ -38,7 +37,7 @@ public class Pinger extends Thread {
 				}
 				
 				// Update DB with the result
-				Database.updateDatabase(tower.getCollection(), tower);
+				Database.updateDatabase(tower.getCollection(), tower, isUp);
 			}
 			
 		}

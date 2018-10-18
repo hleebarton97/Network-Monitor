@@ -10,9 +10,9 @@ public class NetworkSite {
 	private String name;	// Network Site Name
 	private	String router;	// Network Site Router IP
 	
-	private boolean isDown;		// Is the Network Site down or not
+	private boolean isDown;	// Is the Network Site down or not
 	private int downTime = -1;	// Time in minutes the site has
-								// been down for
+							// been down for
 	
 	private DBCollection col;	// The collection this specific
 								// object belongs to

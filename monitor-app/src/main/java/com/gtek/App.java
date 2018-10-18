@@ -37,7 +37,8 @@ public class App {
     			NETWORK_SITE_LIST.add(new NetworkSite(cursor.get("_id").toString(), 
     												  Integer.parseInt(cursor.get("id").toString()), 
     												  cursor.get("name").toString(), 
-    												  cursor.get("router").toString()));
+    												  cursor.get("router").toString(),
+    												  COLLECTION_TOWERS));
     	}
     	
     	
@@ -47,10 +48,11 @@ public class App {
     	 */
     	STATE.setState(State.STATE_RUNNING);
     	STATE.setStateProcess("Running");
-    	Timer timer = new Timer();
-    	Ping ping = new Ping();
-    	ping.setPingable(NETWORK_SITE_LIST);
-    	timer.schedule(ping, 0, (2000));
+    	Ping.Start(NETWORK_SITE_LIST);
+//    	Timer timer = new Timer();
+//    	Ping ping = new Ping();
+//    	ping.setPingable(NETWORK_SITE_LIST);
+//    	timer.schedule(ping, 0, (2000));
     	/**
     	 * The above needs its own class handler.
     	 * I want to be able to call a static function from

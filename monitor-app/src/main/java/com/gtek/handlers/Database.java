@@ -1,6 +1,13 @@
 package com.gtek.handlers;
 
 import java.net.UnknownHostException;
+
+import org.bson.types.ObjectId;
+
+import com.gtek.objects.NetworkSite;
+import com.gtek.util.Console;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
@@ -9,7 +16,25 @@ public class Database {
 	private MongoClientURI connectionString; 
 	private MongoClient mongoClient;
 	
-
+	
+	
+	/**
+	 * Update a network site with uptime information.
+	 * 
+	 * @param col
+	 * @param tower
+	 * @param isUp
+	 */
+	public static void updateDatabase(DBCollection col, NetworkSite tower, boolean isUp) {
+		
+		Console.log("Updating DB...");
+		col.update(
+				new BasicDBObject().append("_id", new ObjectId(tower.getOid())),
+				new BasicDBObject().append("$set", new BasicDBObject().append("down", !(isUp)))
+		);
+	}
+	
+	
 	
 	/**
 	 * CONSTRUCTOR

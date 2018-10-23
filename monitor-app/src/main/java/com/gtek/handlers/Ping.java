@@ -9,7 +9,8 @@ import com.gtek.util.Console;
 public class Ping extends TimerTask {
 	
 	private ArrayList<NetworkSite> NETWORK_SITE_LIST; // Network Site list
-	private int THREAD_COUNT = 10; // How many threads to create
+	private int THREAD_COUNT; // How many threads to create
+	private int SITE_PER_THREAD = 10; // How many sites to ping per thread
 	
 	
 
@@ -27,24 +28,27 @@ public class Ping extends TimerTask {
     	timer.schedule(ping, 0, (60000)); // Start timed task
 	}
 	
+	public static void Stop() {}
+	
 	/**
 	 * Task that is timed to run every minute.
 	 */
 	@Override
 	public void run() {
 		
-		// Determine how many lists to create for 10 threads.
-		double count = Math.floor(NETWORK_SITE_LIST.size() / THREAD_COUNT);
-		Console.log("Size: " + NETWORK_SITE_LIST.size() + " | Count per Thread: " + count);
+		// Determine how many threads are required.
+		this.setThreadCount((int)Math.ceil((double)NETWORK_SITE_LIST.size() / (double)this.SITE_PER_THREAD));
+		Console.log("Threads Required: " + this.THREAD_COUNT + " | Count per Thread: " + this.SITE_PER_THREAD);
+		
 		// Create a new thread object to ping the appropriate amount of network sites
 		// per thread
 		for(int i = 0; i < THREAD_COUNT; i++) {
 			
 			if(i < THREAD_COUNT - 1) {
-				Pinger pinger = new Pinger(new ArrayList(NETWORK_SITE_LIST.subList((int)(i * count), (int)((i + 1) * count))));
+				Pinger pinger = new Pinger(new ArrayList(NETWORK_SITE_LIST.subList((int)(i * this.SITE_PER_THREAD), (int)((i + 1) * this.SITE_PER_THREAD))));
 				pinger.start();
 			} else { // Get the rest of the network sites left
-				Pinger pinger = new Pinger(new ArrayList(NETWORK_SITE_LIST.subList((int)(i * count), (NETWORK_SITE_LIST.size() - 1))));
+				Pinger pinger = new Pinger(new ArrayList(NETWORK_SITE_LIST.subList((int)(i * this.SITE_PER_THREAD), (NETWORK_SITE_LIST.size()))));
 				pinger.start();
 			}
 			
@@ -60,6 +64,14 @@ public class Ping extends TimerTask {
 		this.NETWORK_SITE_LIST = list;
 	}
 	
-	
+	/**
+	 * Set the thread count needed depending
+	 * on how many devices are being pinged.
+	 * 
+	 * @param count
+	 */
+	private void setThreadCount(int count) {
+		this.THREAD_COUNT = count;
+	}
 
 }

@@ -26,21 +26,31 @@ public class App {
     	
     	// Get our collection instance from the MongoDB instance
     	STATE.setStateProcess("Retrieving network site information");
-    	DBCollection COLLECTION_TOWERS = new Database(Reference.CONNECTION_STRING)
-    								.getMongoClient()
-    									.getDB(Reference.DATABASE_NAME)
-    										.getCollection(Reference.COLLECTION_NAME);
+    	DBCollection COLLECTION_TOWERS = Database.GetCollectionTowers();
+    	
+    	// Get our collection instance from the MongoDB instance
+    	DBCollection COLLECTION_APS = Database.GetCollectionAccessPoints();
     	
     	// Get network site information
     	// And create each network site object
     	STATE.setStateProcess("Creating network site objects");
-    	DBObject dbo = new BasicDBObject("router", new BasicDBObject("$exists", true));
-    	for(DBObject cursor : COLLECTION_TOWERS.find(dbo)) {
-    			NETWORK_SITE_LIST.add(new NetworkSite(cursor.get("_id").toString(), 
-    												  Integer.parseInt(cursor.get("id").toString()), 
-    												  cursor.get("name").toString(), 
-    												  cursor.get("router").toString(),
-    												  COLLECTION_TOWERS));
+    	DBObject dbo_tower = new BasicDBObject("router", new BasicDBObject("$exists", true));
+    	for(DBObject cursor : COLLECTION_TOWERS.find(dbo_tower)) {
+			NETWORK_SITE_LIST.add(new NetworkSite(cursor.get("_id").toString(), 
+												  Integer.parseInt(cursor.get("id").toString()), 
+												  cursor.get("name").toString(), 
+												  cursor.get("router").toString(),
+												  COLLECTION_TOWERS));
+    	}
+    	
+    	// Add access points to network site objects
+    	DBObject dbo_ap = new BasicDBObject("subnet", new BasicDBObject("$exists", true));
+    	for(DBObject cursor : COLLECTION_APS.find(dbo_ap)) {
+    		NETWORK_SITE_LIST.add(new NetworkSite(cursor.get("_id").toString(),
+    											  Integer.parseInt(cursor.get("id").toString()),
+    											  cursor.get("name").toString(),
+    											  cursor.get("subnet").toString(),
+    											  COLLECTION_APS));
     	}
     	
     	

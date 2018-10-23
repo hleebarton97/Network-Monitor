@@ -1,11 +1,10 @@
 package com.gtek.handlers;
 
 import java.net.UnknownHostException;
-
 import org.bson.types.ObjectId;
-
 import com.gtek.objects.NetworkSite;
 import com.gtek.util.Console;
+import com.gtek.util.Reference;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
@@ -30,8 +29,6 @@ public class Database {
 		// Update object with this network site's OID
 		BasicDBObject query = new BasicDBObject().append("_id", new ObjectId(tower.getOid()));
 		
-		Console.log("Updating DB...");
-		
 		try {
 			// Update status
 			col.update(
@@ -48,6 +45,32 @@ public class Database {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	/**
+	 * Get the "towers" MongoDB instance
+	 * collection. 
+	 * 
+	 * @return DBCollection
+	 */
+	public static DBCollection GetCollectionTowers() {
+		return new Database(Reference.CONNECTION_STRING)
+				.getMongoClient()
+					.getDB(Reference.DATABASE_NAME)
+						.getCollection(Reference.COLLECTION_NAME_TOWERS);
+	}
+	
+	/**
+	 * Get the "accesspoints" MongoDB instance
+	 * collection. 
+	 * 
+	 * @return DBCollection
+	 */
+	public static DBCollection GetCollectionAccessPoints() {
+		return new Database(Reference.CONNECTION_STRING)
+				.getMongoClient()
+					.getDB(Reference.DATABASE_NAME)
+						.getCollection(Reference.COLLECTION_NAME_APS);
 	}
 	
 	

@@ -8,7 +8,7 @@ public class NetworkSite {
 	
 	private int id;			// Network Site ID
 	private String name;	// Network Site Name
-	private	String router;	// Network Site Router IP
+	private	String subnet;	// Network Site IP
 	
 	private boolean isDown;		// Is the Network Site down or not
 	private int downTime = -1;	// Time in minutes the site has
@@ -25,11 +25,11 @@ public class NetworkSite {
 	 * @param name
 	 * @param router
 	 */
-	public NetworkSite(String _oid, int id, String name, String router) {
+	public NetworkSite(String _oid, int id, String name, String ip) {
 		this.setOid(_oid);
 		this.setId(id);
 		this.setName(name);
-		this.setRouter(router);
+		this.setSubnet(ip);
 	}
 	
 	/**
@@ -40,11 +40,11 @@ public class NetworkSite {
 	 * @param router
 	 * @param col
 	 */
-	public NetworkSite(String _oid, int id, String name, String router, DBCollection col) {
+	public NetworkSite(String _oid, int id, String name, String ip, DBCollection col) {
 		this.setOid(_oid);
 		this.setId(id);
 		this.setName(name);
-		this.setRouter(router);
+		this.setSubnet(ip);
 		this.setCollection(col);
 	}
 	
@@ -146,8 +146,8 @@ public class NetworkSite {
 	 * 
 	 * @param router
 	 */
-	public void setRouter(String router) {
-		this.router = router;
+	public void setSubnet(String ip) {
+		this.subnet = ip;
 	}
 	
 	/**
@@ -156,8 +156,8 @@ public class NetworkSite {
 	 * 
 	 * @return
 	 */
-	public String getRouter() {
-		return this.router;
+	public String getSubnet() {
+		return this.subnet;
 	}
 	
 	/**

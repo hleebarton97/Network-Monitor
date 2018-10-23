@@ -30,10 +30,11 @@ public class Pinger extends Thread {
 		
 		try {
 			// Check status by ICMP ECHO
+			Console.log("THREAD: " + Thread.currentThread().getId() + " | SITE SIZE: " + NETWORK_SITE_LIST.size());
 			for(NetworkSite tower : NETWORK_SITE_LIST) {
 				
-				boolean isUp = this.isReachable(tower.getRouter());
-				Console.log(isUp ? tower.getNameId() + " is up!" : tower.getNameId() + " is down!");
+				boolean isUp = this.isReachable(tower.getSubnet());
+				if(!isUp) Console.log(tower.getName() + " is down!");
 				// Set status and time down in minutes
 				tower.setStatus(!isUp);
 				if(isUp) {

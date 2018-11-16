@@ -1,18 +1,76 @@
 package com.gtek;
 
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Timer;
+
 import com.gtek.handlers.Database;
 import com.gtek.handlers.Ping;
 import com.gtek.handlers.State;
-import com.gtek.objects.NetworkSite;
-import com.gtek.util.Reference;
+import com.gtek.objects.Device;
+import com.gtek.ui.Gui;
+import com.gtek.util.Console;
 import com.mongodb.*;
 
 public class App {
 	
-    public static void main( String[] args ) {
-    	
-    	/**
+	public static Gui window;
+	public static Timer timer;
+	public static State state;
+	public static Database db;
+	
+	/**
+	 * Update the network device stats text
+	 * on the GUI.
+	 */
+	public static void UpdateGUIText() {
+		int totalDevices = Database.GetTotalDocumentCount();
+		int totalDevicesDown = Database.GetTotalDevicesDown();
+		int percentUp = (int)Math.floor(100 * (totalDevices - totalDevicesDown) / totalDevices);
+		
+    	App.window.getTotalDevicesLabel().setText(totalDevices + "");
+    	App.window.getTotalDevicesDownLabel().setText(totalDevicesDown + "");
+    	App.window.getPercentLabel().setText(percentUp + "%");
+    }
+	
+	/**
+	 * Update the current state text on the
+	 * GUI.
+	 * 
+	 * @param text
+	 */
+	public static void UpdateStateGUIText(String text) {
+		if(App.GuiIsReady()) {
+			App.window.getStateLabel().setText(text);
+		}
+	}
+	
+	/**
+	 * Update the runtime text on the GUI.
+	 * 
+	 * @param text
+	 */
+	public static void UpdateRuntimeGUIText(String text) {
+		if(App.GuiIsReady()) {
+			App.window.getRuntimeLabel().setText(text);
+		}
+	}
+	
+	/**
+	 * Check if the app window has been
+	 * initialized.
+	 * 
+	 * @return boolean
+	 */
+	public static boolean GuiIsReady() {
+		return !(App.window == null);
+	}
+	
+	public static void Init() {
+		
+		/**
     	 * INITIALIZATION
     	 * 
     	 * Initialize the state handler, Create our network site object list,
@@ -20,23 +78,38 @@ public class App {
     	 * documents.
     	 */
     	
-    	State STATE = new State(); // Create our state handler
+    	App.state = new State(); // Create our state handler
     	// Initialize our list of network site objects
-    	ArrayList<NetworkSite> NETWORK_SITE_LIST = new ArrayList<NetworkSite>();
+    	ArrayList<Device> NETWORK_DEVICE_LIST = new ArrayList<Device>();
+    	Console.log(App.state.getStateAsString());
+    	Console.log(App.state.getStateProcess());
+    	
+    	App.UpdateStateGUIText(App.state.getStateProcess());
     	
     	// Get our collection instance from the MongoDB instance
-    	STATE.setStateProcess("Retrieving network site information");
-    	DBCollection COLLECTION_TOWERS = Database.GetCollectionTowers();
+    	App.state.setStateProcess("Retrieving network site information...");
+    	Console.log(App.state.getStateProcess());
+    	
+    	App.UpdateStateGUIText(App.state.getStateProcess());
+    	
+    	// Initialize the database.
+    	App.db = Database.CreateDatabase();
+    	
+    	DBCollection COLLECTION_TOWERS = Database.GetCollectionTowers(App.db);
     	
     	// Get our collection instance from the MongoDB instance
-    	DBCollection COLLECTION_APS = Database.GetCollectionAccessPoints();
+    	DBCollection COLLECTION_APS = Database.GetCollectionAccessPoints(App.db);
     	
     	// Get network site information
     	// And create each network site object
-    	STATE.setStateProcess("Creating network site objects");
+    	App.state.setStateProcess("Creating network site objects...");
+    	Console.log(App.state.getStateProcess());
+
+    	App.UpdateStateGUIText(App.state.getStateProcess());
+    	
     	DBObject dbo_tower = new BasicDBObject("router", new BasicDBObject("$exists", true));
     	for(DBObject cursor : COLLECTION_TOWERS.find(dbo_tower)) {
-			NETWORK_SITE_LIST.add(new NetworkSite(cursor.get("_id").toString(), 
+    		NETWORK_DEVICE_LIST.add(new Device(cursor.get("_id").toString(), 
 												  Integer.parseInt(cursor.get("id").toString()), 
 												  cursor.get("name").toString(), 
 												  cursor.get("router").toString(),
@@ -46,7 +119,7 @@ public class App {
     	// Add access points to network site objects
     	DBObject dbo_ap = new BasicDBObject("subnet", new BasicDBObject("$exists", true));
     	for(DBObject cursor : COLLECTION_APS.find(dbo_ap)) {
-    		NETWORK_SITE_LIST.add(new NetworkSite(cursor.get("_id").toString(),
+    		NETWORK_DEVICE_LIST.add(new Device(cursor.get("_id").toString(),
     											  Integer.parseInt(cursor.get("id").toString()),
     											  cursor.get("name").toString(),
     											  cursor.get("subnet").toString(),
@@ -65,11 +138,79 @@ public class App {
     	 */
     	
     	// Update system state
-    	STATE.setState(State.STATE_RUNNING);
-    	STATE.setStateProcess("Running");
-    	// Begin ping process
-    	Ping.Start(NETWORK_SITE_LIST);
+    	App.state.setState(State.STATE_RUNNING);
+    	App.state.setStateProcess("Running");
+    	App.UpdateStateGUIText(App.state.getStateAsString());
+    	Console.log(App.state.getStateProcess());
     	
+    	App.UpdateStateGUIText(App.state.getStateProcess());
+    	
+    	// Begin ping process
+    	App.timer = Ping.Start(NETWORK_DEVICE_LIST);
+		
+	}
+	
+    public static void main( String[] args ) {
+    	
+    	/**
+    	 * START GUI
+    	 * 
+    	 * Show the window that will provide a button
+    	 * to start and stop the running processes.
+    	 */
+    	EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					
+					// Create window object
+					Gui window = new Gui();
+					App.window = window;
+					window.getFrame().setVisible(true);
+					
+					// Initialize labels
+					App.UpdateGUIText();
+					
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+    	
+    	
+    	
+    	/**
+    	 * INITIALIZE, START PROCESS
+    	 */
+    	App.Init(); // Initialize the application
+    	
+    	
+    	
+    	/**
+    	 * ACTION LISTENERS
+    	 */
+    	window.getButtonToggle().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				if(App.state.getState() == State.STATE_RUNNING) {
+					Console.log("Stopping processes...");
+					App.state.setStateProcess("Stopping runtime...");
+					App.UpdateStateGUIText(App.state.getStateProcess());
+					
+					App.timer.cancel(); // Cancel timer
+					
+					Database.Close(App.db); // Close db connection
+					
+					App.window.getButtonToggle().setText("Start"); // Update button label
+					App.state.setState(State.STATE_STOPPED); // Update state
+					App.state.setStateProcess("Stopped");
+					App.UpdateStateGUIText(App.state.getStateProcess());
+					Console.log("Processes Stopped!");
+				} else {
+					Console.log("Initializing...");
+					App.Init(); // Re-initialize
+					App.window.getButtonToggle().setText("Stop"); // Update button label
+				}
+			}
+    	});
     }
-    
 }

@@ -2,7 +2,7 @@ package com.gtek.objects;
 
 import com.mongodb.DBCollection;
 
-public class NetworkSite {
+public class Device {
 	
 	private String _oid; // MongoDB collection document ID
 	
@@ -25,7 +25,7 @@ public class NetworkSite {
 	 * @param name
 	 * @param router
 	 */
-	public NetworkSite(String _oid, int id, String name, String ip) {
+	public Device(String _oid, int id, String name, String ip) {
 		this.setOid(_oid);
 		this.setId(id);
 		this.setName(name);
@@ -40,7 +40,7 @@ public class NetworkSite {
 	 * @param router
 	 * @param col
 	 */
-	public NetworkSite(String _oid, int id, String name, String ip, DBCollection col) {
+	public Device(String _oid, int id, String name, String ip, DBCollection col) {
 		this.setOid(_oid);
 		this.setId(id);
 		this.setName(name);

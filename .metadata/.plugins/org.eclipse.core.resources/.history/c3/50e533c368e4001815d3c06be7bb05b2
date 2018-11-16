@@ -1,0 +1,96 @@
+package com.gtek.ui;
+
+import javax.swing.JFrame;
+import javax.swing.JButton;
+import java.awt.BorderLayout;
+import javax.swing.JPanel;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import javax.swing.LayoutStyle.ComponentPlacement;
+
+public class Gui {
+
+	private JFrame frame;
+	private JLabel info_TotalDevices;
+
+	/**
+	 * Create the application.
+	 */
+	public Gui() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 600, 400);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JPanel panel = new JPanel();
+		frame.getContentPane().add(panel, BorderLayout.CENTER);
+		
+		JButton btn_Toggle = new JButton("Stop");
+		btn_Toggle.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		
+		JLabel lbl_TotalDevices = new JLabel("Monitored Network Devices: ");
+		JLabel info_TotalDevices = new JLabel("0");
+		this.setTotalDevicesLabel(info_TotalDevices);
+		
+		GroupLayout gl_panel = new GroupLayout(panel);
+		gl_panel.setHorizontalGroup(
+			gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup()
+					.addGap(208)
+					.addComponent(btn_Toggle, GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+					.addGap(204))
+				.addGroup(gl_panel.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(lbl_TotalDevices)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(info_TotalDevices)
+					.addContainerGap(384, Short.MAX_VALUE))
+		);
+		gl_panel.setVerticalGroup(
+			gl_panel.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panel.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lbl_TotalDevices)
+						.addComponent(info_TotalDevices))
+					.addPreferredGap(ComponentPlacement.RELATED, 214, Short.MAX_VALUE)
+					.addComponent(btn_Toggle, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
+					.addGap(82))
+		);
+		panel.setLayout(gl_panel);
+	}
+	
+	/**
+	 *	Get the main GUI window.
+	 */
+	public JFrame getFrame() {
+		return this.frame;
+	}
+	
+	/**
+	 * Set the label for total devices.
+	 * @param lbl
+	 */
+	public void setTotalDevicesLabel(JLabel lbl) {
+		this.info_TotalDevices = lbl;
+	}
+	
+	/**
+	 * Get the label for total devices.
+	 */
+	public JLabel getTotalDevicesLabel() {
+		return this.info_TotalDevices;
+	}
+}

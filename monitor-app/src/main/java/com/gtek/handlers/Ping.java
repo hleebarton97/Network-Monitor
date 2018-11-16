@@ -3,14 +3,17 @@ package com.gtek.handlers;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-import com.gtek.objects.NetworkSite;
+
+import com.gtek.App;
+import com.gtek.objects.Device;
 import com.gtek.util.Console;
 
 public class Ping extends TimerTask {
 	
-	private ArrayList<NetworkSite> NETWORK_SITE_LIST; // Network Site list
+	private ArrayList<Device> NETWORK_DEVICE_LIST; // Network Site list
 	private int THREAD_COUNT; // How many threads to create
-	private int SITE_PER_THREAD = 10; // How many sites to ping per thread
+	private int DEVICE_PER_THREAD = 10; // How many sites to ping per thread
+	private int RUNTIME = 0;
 	
 	
 
@@ -21,14 +24,15 @@ public class Ping extends TimerTask {
 	 * 
 	 * @param list
 	 */
-	public static void Start(ArrayList<NetworkSite> list) {
+	public static Timer Start(ArrayList<Device> list) {
 		Timer timer = new Timer(); // Create new timer object
     	Ping ping = new Ping(); // Create new ping object (this)
     	ping.setPingable(list); // Set the list
     	timer.schedule(ping, 0, (60000)); // Start timed task
+    	return timer;
 	}
 	
-	public static void Stop() {}
+	//public static void Stop() {}
 	
 	/**
 	 * Task that is timed to run every minute.
@@ -37,22 +41,24 @@ public class Ping extends TimerTask {
 	public void run() {
 		
 		// Determine how many threads are required.
-		this.setThreadCount((int)Math.ceil((double)NETWORK_SITE_LIST.size() / (double)this.SITE_PER_THREAD));
-		Console.log("Threads Required: " + this.THREAD_COUNT + " | Count per Thread: " + this.SITE_PER_THREAD);
-		
+		this.setThreadCount((int)Math.ceil((double)NETWORK_DEVICE_LIST.size() / (double)this.DEVICE_PER_THREAD));
+		//Console.log("Threads Required: " + this.THREAD_COUNT + " | Count per Thread: " + this.DEVICE_PER_THREAD);
+		Console.log("Current runtime: " + this.RUNTIME);
+		this.updateRuntimeGuiText();
 		// Create a new thread object to ping the appropriate amount of network sites
 		// per thread
 		for(int i = 0; i < THREAD_COUNT; i++) {
 			
 			if(i < THREAD_COUNT - 1) {
-				Pinger pinger = new Pinger(new ArrayList(NETWORK_SITE_LIST.subList((int)(i * this.SITE_PER_THREAD), (int)((i + 1) * this.SITE_PER_THREAD))));
+				Pinger pinger = new Pinger(new ArrayList(NETWORK_DEVICE_LIST.subList((int)(i * this.DEVICE_PER_THREAD), (int)((i + 1) * this.DEVICE_PER_THREAD))));
 				pinger.start();
 			} else { // Get the rest of the network sites left
-				Pinger pinger = new Pinger(new ArrayList(NETWORK_SITE_LIST.subList((int)(i * this.SITE_PER_THREAD), (NETWORK_SITE_LIST.size()))));
+				Pinger pinger = new Pinger(new ArrayList(NETWORK_DEVICE_LIST.subList((int)(i * this.DEVICE_PER_THREAD), (NETWORK_DEVICE_LIST.size()))));
 				pinger.start();
 			}
 			
 		}
+		this.RUNTIME++;
 	}
 	
 	/**
@@ -60,8 +66,8 @@ public class Ping extends TimerTask {
 	 * 
 	 * @param list
 	 */
-	public void setPingable(ArrayList<NetworkSite> list) {
-		this.NETWORK_SITE_LIST = list;
+	public void setPingable(ArrayList<Device> list) {
+		this.NETWORK_DEVICE_LIST = list;
 	}
 	
 	/**
@@ -72,6 +78,31 @@ public class Ping extends TimerTask {
 	 */
 	private void setThreadCount(int count) {
 		this.THREAD_COUNT = count;
+	}
+	
+	/**
+	 * Update the runtime GUI text.
+	 */
+	private void updateRuntimeGuiText() {
+		if(this.RUNTIME >= 60) {
+			
+			double hours = Math.floor(this.RUNTIME / 60);
+			
+			if(hours > 1) {
+				App.UpdateRuntimeGUIText(hours + "  hours");
+			} else {
+				App.UpdateRuntimeGUIText(hours + " hour");
+			}
+		} else {
+			
+			if(this.RUNTIME < 1) {
+				App.UpdateRuntimeGUIText("< 1 minute");
+			} else if(this.RUNTIME > 1) {
+				App.UpdateRuntimeGUIText(this.RUNTIME + "  minutes");
+			} else {
+				App.UpdateRuntimeGUIText(this.RUNTIME + "  minute");
+			}
+		}
 	}
 
 }

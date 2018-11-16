@@ -1,0 +1,194 @@
+package com.gtek;
+
+import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Timer;
+
+import com.gtek.handlers.Database;
+import com.gtek.handlers.Ping;
+import com.gtek.handlers.State;
+import com.gtek.objects.Device;
+import com.gtek.ui.Gui;
+import com.gtek.util.Console;
+import com.mongodb.*;
+
+public class App {
+	
+	public static Gui window;
+	public static Timer timer;
+	public static State state;
+	public static Database db;
+	
+	public static void UpdateGUIText() {
+    	App.window.getTotalDevicesLabel().setText(Database.GetTotalDocumentCount() + "");
+    	App.window.getTotalDevicesDownLabel().setText(Database.GetTotalDevicesDown() + "");
+    }
+	
+	public static void UpdateStateGUIText(String text) {
+		App.window.getStateLabel().setText(text);
+	}
+	
+	public static boolean GuiIsReady() {
+		if(App.window == null) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	public static void Init() {
+		
+		/**
+    	 * INITIALIZATION
+    	 * 
+    	 * Initialize the state handler, Create our network site object list,
+    	 * Initialize the MongoDB instance and get our collection of 
+    	 * documents.
+    	 */
+    	
+    	App.state = new State(); // Create our state handler
+    	// Initialize our list of network site objects
+    	ArrayList<Device> NETWORK_DEVICE_LIST = new ArrayList<Device>();
+    	Console.log(App.state.getStateAsString());
+    	Console.log(App.state.getStateProcess());
+    	
+    	if(App.GuiIsReady()) {
+    		App.UpdateStateGUIText(App.state.getStateAsString());
+    	}
+    	
+    	// Get our collection instance from the MongoDB instance
+    	App.state.setStateProcess("Retrieving network site information...");
+    	Console.log(App.state.getStateProcess());
+    	
+    	if(App.GuiIsReady()) {
+    		App.UpdateStateGUIText(App.state.getStateAsString());
+    	}
+    	
+    	// Initialize the database.
+    	App.db = Database.CreateDatabase();
+    	
+    	DBCollection COLLECTION_TOWERS = Database.GetCollectionTowers(App.db);
+    	
+    	// Get our collection instance from the MongoDB instance
+    	DBCollection COLLECTION_APS = Database.GetCollectionAccessPoints(App.db);
+    	
+    	// Get network site information
+    	// And create each network site object
+    	App.state.setStateProcess("Creating network site objects...");
+    	Console.log(App.state.getStateProcess());
+
+    	if(App.GuiIsReady()) {
+    		App.UpdateStateGUIText(App.state.getStateAsString());
+    	}
+    	
+    	DBObject dbo_tower = new BasicDBObject("router", new BasicDBObject("$exists", true));
+    	for(DBObject cursor : COLLECTION_TOWERS.find(dbo_tower)) {
+    		NETWORK_DEVICE_LIST.add(new Device(cursor.get("_id").toString(), 
+												  Integer.parseInt(cursor.get("id").toString()), 
+												  cursor.get("name").toString(), 
+												  cursor.get("router").toString(),
+												  COLLECTION_TOWERS));
+    	}
+    	
+    	// Add access points to network site objects
+    	DBObject dbo_ap = new BasicDBObject("subnet", new BasicDBObject("$exists", true));
+    	for(DBObject cursor : COLLECTION_APS.find(dbo_ap)) {
+    		NETWORK_DEVICE_LIST.add(new Device(cursor.get("_id").toString(),
+    											  Integer.parseInt(cursor.get("id").toString()),
+    											  cursor.get("name").toString(),
+    											  cursor.get("subnet").toString(),
+    											  COLLECTION_APS));
+    	}
+    	
+    	
+    	
+    	/**
+    	 * BEGIN PINGING PROCESS
+    	 * 
+    	 * Update the state to running and utilize the ping object
+    	 * to start a scheduled process for every minute.
+    	 * Ping each network site and update their MongoDB
+    	 * document utilizing multiple threads.
+    	 */
+    	
+    	// Update system state
+    	App.state.setState(State.STATE_RUNNING);
+    	App.state.setStateProcess("Running");
+    	App.UpdateStateGUIText(App.state.getStateAsString());
+    	Console.log(App.state.getStateProcess());
+    	
+    	if(App.GuiIsReady()) {
+    		App.UpdateStateGUIText(App.state.getStateAsString());
+    	}
+    	
+    	// Begin ping process
+    	App.timer = Ping.Start(NETWORK_DEVICE_LIST);
+		
+	}
+	
+    public static void main( String[] args ) {
+    	
+    	/**
+    	 * START GUI
+    	 * 
+    	 * Show the window that will provide a button
+    	 * to start and stop the running processes.
+    	 */
+    	EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					
+					// Create window object
+					Gui window = new Gui();
+					App.window = window;
+					window.getFrame().setVisible(true);
+					
+					// Initialize labels
+					App.UpdateGUIText();
+					
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+    	
+    	
+    	
+    	/**
+    	 * INITIALIZE, START PROCESS
+    	 */
+    	App.Init(); // Initialize the application
+    	
+    	
+    	
+    	/**
+    	 * ACTION LISTENERS
+    	 */
+    	window.getButtonToggle().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				if(App.state.getState() == State.STATE_RUNNING) {
+					Console.log("Stopping processes...");
+					App.state.setStateProcess("Stopping runtime...");
+					App.UpdateStateGUIText(App.state.getStateAsString());
+					
+					App.timer.cancel(); // Cancel timer
+					
+					Database.Close(App.db); // Close db connection
+					
+					App.window.getButtonToggle().setText("Start"); // Update button label
+					App.state.setState(State.STATE_STOPPED); // Update state
+					App.state.setStateProcess("Stopped");
+					App.UpdateStateGUIText(App.state.getStateAsString());
+					Console.log("Processes Stopped!");
+				} else {
+					Console.log("Initializing...");
+					App.Init(); // Re-initialize
+					App.window.getButtonToggle().setText("Stop"); // Update button label
+				}
+			}
+    	});
+    }
+}

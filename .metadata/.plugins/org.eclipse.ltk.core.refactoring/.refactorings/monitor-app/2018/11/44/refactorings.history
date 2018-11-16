@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;com.gtek.objects.NetworkSite&apos; to &apos;Device&apos;&#x0D;&#x0A;- Original project: &apos;monitor-app&apos;&#x0D;&#x0A;- Original element: &apos;com.gtek.objects.NetworkSite&apos;&#x0D;&#x0A;- Renamed element: &apos;com.gtek.objects.Device&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;NetworkSite&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src\/main\/java&lt;com.gtek.objects{NetworkSite.java[NetworkSite" matchStrategy="1" name="Device" qualified="false" references="true" similarDeclarations="false" stamp="1541184073219" textual="false" version="1.0"/>
+</session>

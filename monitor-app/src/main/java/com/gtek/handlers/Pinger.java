@@ -2,12 +2,12 @@ package com.gtek.handlers;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
-import com.gtek.objects.NetworkSite;
+import com.gtek.objects.Device;
 import com.gtek.util.Console;
 
 public class Pinger extends Thread {
 	
-	private ArrayList<NetworkSite> NETWORK_SITE_LIST; // Network Site list
+	private ArrayList<Device> NETWORK_SITE_LIST; // Network Site list
 	
 	
 	
@@ -18,7 +18,7 @@ public class Pinger extends Thread {
 	 * 
 	 * @param list
 	 */
-	public Pinger(ArrayList<NetworkSite> list) {
+	public Pinger(ArrayList<Device> list) {
 		this.setList(list);
 	}
 
@@ -30,20 +30,20 @@ public class Pinger extends Thread {
 		
 		try {
 			// Check status by ICMP ECHO
-			Console.log("THREAD: " + Thread.currentThread().getId() + " | SITE SIZE: " + NETWORK_SITE_LIST.size());
-			for(NetworkSite tower : NETWORK_SITE_LIST) {
+			//Console.log("THREAD: " + Thread.currentThread().getId() + " | SITE SIZE: " + NETWORK_SITE_LIST.size());
+			for(Device dev : NETWORK_SITE_LIST) {
 				
-				boolean isUp = this.isReachable(tower.getSubnet());
-				if(!isUp) Console.log(tower.getName() + " is down!");
+				boolean isUp = this.isReachable(dev.getSubnet());
+				//if(!isUp) Console.log(tower.getName() + " is down!");
 				// Set status and time down in minutes
-				tower.setStatus(!isUp);
+				dev.setStatus(!isUp);
 				if(isUp) {
-					tower.resetDownTime();
+					dev.resetDownTime();
 				} else {
-					tower.updateDownTime();
+					dev.updateDownTime();
 				}
 				// Update DB with the result
-				Database.UpdateDatabase(tower.getCollection(), tower);
+				Database.UpdateDatabase(dev.getCollection(), dev);
 			}
 			
 		}
@@ -80,7 +80,7 @@ public class Pinger extends Thread {
 	 * 
 	 * @param list
 	 */
-	public void setList(ArrayList<NetworkSite> list) {
+	public void setList(ArrayList<Device> list) {
 		this.NETWORK_SITE_LIST = list;
 	}
 	
